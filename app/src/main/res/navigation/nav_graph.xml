@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/loginFragment">
+
+    <!-- Login Fragment -->
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.learning.fragment.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+
+    <!-- Signup Fragment -->
+    <fragment
+        android:id="@+id/signupFragment"
+        android:name="com.example.learning.fragment.SignupFragment"
+        android:label="Signup">
+        <action
+            android:id="@+id/action_signupFragment_to_interestsFragment"
+            app:destination="@id/interestsFragment" />
+    </fragment>
+
+    <!-- Interests Fragment -->
+    <fragment
+        android:id="@+id/interestsFragment"
+        android:name="com.example.learning.fragment.InterestsFragment"
+        android:label="Interests">
+        <action
+            android:id="@+id/action_interestsFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+
+    <!-- Dashboard Fragment -->
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.example.learning.fragment.DashboardFragment"
+        android:label="Dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
+
+    <!-- Task Detail Fragment -->
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.example.learning.fragment.TaskDetailFragment"
+        android:label="Task Detail">
+        <action
+            android:id="@+id/action_taskDetailFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <!-- Result Fragment -->
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.learning.fragment.ResultFragment"
+        android:label="Result" />
+
+    <action
+        android:id="@+id/action_interestsFragment_to_dashboardFragment"
+        app:destination="@id/dashboardFragment" />
+
+    <action
+        android:id="@+id/action_resultFragment_to_dashboardFragment"
+        app:destination="@id/dashboardFragment" />
+
+</navigation>
