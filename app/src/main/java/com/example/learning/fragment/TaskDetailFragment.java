@@ -41,6 +41,7 @@ public class TaskDetailFragment extends Fragment {
         recyclerViewQuestions = view.findViewById(R.id.recyclerViewQuestions);
         buttonSubmitAnswers = view.findViewById(R.id.buttonSubmitAnswers);
 
+
         Bundle bundle = getArguments();
         if (bundle != null) {
             taskTitle = bundle.getString("taskTitle", "General Quiz");
@@ -66,7 +67,7 @@ public class TaskDetailFragment extends Fragment {
             Bundle resultBundle = new Bundle();
             resultBundle.putInt("correctAnswers", correctCount);
             resultBundle.putInt("totalQuestions", totalQuestions);
-
+            resultBundle.putString("quizTitle", taskTitle);
             NavOptions options = new NavOptions.Builder()
                     .setEnterAnim(R.anim.slide_in_rigth)
                     .setExitAnim(R.anim.slide_out_left)

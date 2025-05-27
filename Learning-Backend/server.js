@@ -1,10 +1,23 @@
+const User = require('./model/User');
+const Task = require('./model/Task');
+
 const express = require('express');
-const cors = require('cors');
+const mongoose = require('mongoose'); 
+const cors = require('cors'); 
+const bodyParser = require('body-parser');
+require('dotenv').config();
 const app = express();
+
 const PORT = 5002;
 
 app.use(cors());
 app.use(express.json());
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log('✅ MongoDB Connected'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
 
 const dummyQuestions = {
   "AI": [
@@ -77,6 +90,143 @@ app.get('/getQuestions', (req, res) => {
   const questions = dummyQuestions[topic] || dummyQuestions["General"];
   res.json(questions);
 });
+
+app.get('/public-profile/:userId', async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const user = await User.findById(userId, 'username email score interests'); // Select only public fields
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({
+            name: user.username,
+            email: user.email,
+            interests: user.interests,
+            score: user.score || 0 // Optional
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const user = await User.findOne({ username, password }); // Plaintext check for now
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+app.post('/api/signup', async (req, res) => {
+    const { username, email, password, phone } = req.body;
+
+    try {
+        // Check if user exists
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(409).json({ error: 'Username already taken' });
+        }
+
+        // Save new user
+        const newUser = new User({
+            username,
+            email,
+            password,
+            phone,
+            interests: [],
+            score: 0,
+            premium: false
+        });
+
+        await newUser.save();
+
+        res.status(201).json({ message: 'User created', _id: newUser._id });
+
+    } catch (err) {
+        console.error('Signup Error:', err);
+        res.status(500).json({ error: 'Signup failed' });
+    }
+});
+
+app.get('/api/public-profile/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        res.json({
+            username: user.username,
+            score: user.score,
+            premium: user.premium,
+            level: user.score > 80 ? 'Advanced' : user.score > 40 ? 'Intermediate' : 'Starter'
+        });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch profile' });
+    }
+});
+// Example: GET /api/history/:userId
+app.get('/api/history/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user.history || []);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+app.post('/api/submit-task', async (req, res) => {
+    const { userId, title, score, total } = req.body;
+    console.log(req.body);
+
+    if (!userId || !title) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newTask = new Task({
+        userId: req.body.userId,
+    title: req.body.title,
+    score: req.body.score,
+    total: req.body.total,
+        date: new Date()
+    });
+
+    await newTask.save();
+    res.json({ success: true });
+});
+app.get('/tasks/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  const tasks = await Task.find({ userId }).sort({ date: -1 });
+  res.json(tasks);
+});
+app.post('/api/upgrade', async (req, res) => {
+    const { userId, plan } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        user.premium = true;
+        await user.save();
+
+        res.json({ success: true, message: `${plan} plan activated for user.` });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to upgrade account' });
+    }
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

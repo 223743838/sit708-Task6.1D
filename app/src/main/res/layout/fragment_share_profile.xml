@@ -1,0 +1,75 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Share Your Public Profile"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/black"  android:layout_height="wrap_content" android:layout_width="match_parent"/>
+
+        <!-- Public Link -->
+        <TextView
+            android:id="@+id/textViewPublicLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textIsSelectable="true"
+            android:autoLink="web"
+            android:layout_marginBottom="16dp"
+            android:text="https://your-link-will-appear-here.com" />
+        <TextView
+            android:id="@+id/textUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Level"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp"/>
+        <!-- Copy Button -->
+        <Button
+            android:id="@+id/buttonCopyLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy Link"
+            android:layout_marginBottom="24dp" />
+
+        <!-- QR Code -->
+        <ImageView
+            android:id="@+id/imageViewQrCode"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="QR Code" />
+
+        <!-- Share Button -->
+        <Button
+            android:id="@+id/buttonShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share Link" />
+    </LinearLayout>
+</ScrollView>

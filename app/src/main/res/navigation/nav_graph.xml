@@ -45,6 +45,15 @@
         <action
             android:id="@+id/action_dashboardFragment_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_shareProfileFragment"
+            app:destination="@id/shareProfileFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_upgradeFragment"
+            app:destination="@id/upgradeFragment" />
     </fragment>
 
     <!-- Task Detail Fragment -->
@@ -57,18 +66,46 @@
             app:destination="@id/resultFragment" />
     </fragment>
 
+    <!-- Share Profile Fragment -->
+    <fragment
+        android:id="@+id/shareProfileFragment"
+        android:name="com.example.learning.fragment.ShareProfileFragment"
+        android:label="Share Profile" />
+
+    <!-- History Fragment -->
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.learning.fragment.HistoryFragment"
+        android:label="History" />
+
     <!-- Result Fragment -->
     <fragment
         android:id="@+id/resultFragment"
         android:name="com.example.learning.fragment.ResultFragment"
-        android:label="Result" />
+        android:label="Result">
+        <action
+            android:id="@+id/action_resultFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
 
-    <action
-        android:id="@+id/action_interestsFragment_to_dashboardFragment"
-        app:destination="@id/dashboardFragment" />
+    <!-- Upgrade Account Fragment -->
+    <fragment
+        android:id="@+id/upgradeAccountFragment"
+        android:name="com.example.learning.fragment.UpgradeAccountFragment"
+        android:label="Upgrade Account" />
 
-    <action
-        android:id="@+id/action_resultFragment_to_dashboardFragment"
-        app:destination="@id/dashboardFragment" />
+    <!-- Upgrade Fragment -->
+    <fragment
+        android:id="@+id/upgradeFragment"
+        android:name="com.example.learning.fragment.UpgradeFragment"
+        android:label="Upgrade">
+        <action
+            android:id="@+id/action_upgradeFragment_to_upgradeAccountFragment"
+            app:destination="@id/upgradeAccountFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mockPaymentFragment"
+        android:name="com.example.learning.fragment.MockPaymentFragment"
+        android:label="Mock Payment" />
 
 </navigation>

@@ -1,8 +1,13 @@
 package com.example.learning.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,11 +16,21 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.learning.R;
 import com.example.learning.adapters.TaskAdapter;
 import com.example.learning.model.Task;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +41,15 @@ public class DashboardFragment extends Fragment implements TaskAdapter.OnTaskCli
     private ImageView imageViewProfile;
     private List<Task> taskList = new ArrayList<>();
 
+    private Button buttonShareProfile;
     public DashboardFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        buttonShareProfile = view.findViewById(R.id.buttonShareProfile);
 
         recyclerViewTasks = view.findViewById(R.id.recyclerViewTasks);
         textViewWelcome = view.findViewById(R.id.textViewWelcomeDashboard);
@@ -42,15 +60,54 @@ public class DashboardFragment extends Fragment implements TaskAdapter.OnTaskCli
         imageViewProfile.setOnClickListener(v -> {
             // Later navigate to Profile
         });
+        Button buttonShareProfile = view.findViewById(R.id.buttonShareProfile);
+        buttonShareProfile.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_dashboardFragment_to_shareProfileFragment);
+        });
+        Button buttonUpgrade = view.findViewById(R.id.buttonUpgrade);
+        buttonUpgrade.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.upgradeFragment);
+        });
 
         taskList = generatePersonalizedTasks();
         TaskAdapter taskAdapter = new TaskAdapter(taskList, this);
         recyclerViewTasks.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewTasks.setAdapter(taskAdapter);
+        Button buttonHistory = view.findViewById(R.id.buttonHistory);
+        buttonHistory.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_dashboardFragment_to_historyFragment);
+        });
 
         return view;
     }
+    private void generateAndShareQRCode(String content) {
+        try {
+            // Generate QR code
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, 400, 400);
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.createBitmap(bitMatrix);
 
+            // Save QR code to cache
+            File cachePath = new File(requireContext().getCacheDir(), "images");
+            cachePath.mkdirs();
+            File file = new File(cachePath, "qr.png");
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+
+            // Share QR code image
+            Uri uri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".provider", file);
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/png");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "Share QR code using"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "QR code generation failed", Toast.LENGTH_SHORT).show();
+        }
+    }
     private List<Task> generatePersonalizedTasks() {
         List<Task> list = new ArrayList<>();
 
@@ -133,5 +190,6 @@ public class DashboardFragment extends Fragment implements TaskAdapter.OnTaskCli
         // fallback
         return "General";
     }
+
 
 }
